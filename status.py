@@ -6,7 +6,20 @@ from luma.oled.device import sh1106
 import time
 import subprocess
 
+from datetime import datetime
+from datetime import timedelta
+
 from PIL import Image, ImageDraw, ImageFont
+
+# Uptime.
+def get_pretty_timedelta(tdelta):
+    s = tdelta.seconds
+    hours, remainder = divmod(s, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return str(tdelta.days) + ' days {:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
+# Uptime.
+
+
 
 serial = i2c(port=1, address=0x3C)
 device = sh1106(serial, width=128, height=64, rotate=2)
@@ -19,11 +32,13 @@ show_sd_card = True
 switch_counter = 0
 switch_counter_max = 3
 
+startup_time = datetime.now()
+
 while True:
 	with canvas(device) as draw:
 		draw.rectangle(device.bounding_box, outline="black", fill="black")
-		cmd = "uptime | awk ' { print $1 }'"
-		Uptime = subprocess.check_output(cmd, shell = True )
+
+		Uptime = get_pretty_timedelta(datetime.now() - startup_time)
 
 		cmd = "top -bn1 | grep load | awk '{printf \" %.2f%\", $(NF-2)}'"
 		CPU = subprocess.check_output(cmd, shell = True )
@@ -42,7 +57,7 @@ while True:
 
 		# Uptime.
 		draw.text((0, 0), "\uf017", fill=255, font=icons)
-		draw.text((16, 0), " " + str(Uptime,'utf-8'), fill=255, font=font)
+		draw.text((16, 0), " " + Uptime, fill=255, font=font)
 
 		# CPU.
 		draw.text((0, 16), "\uf2db", fill=255, font=icons)
