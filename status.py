@@ -34,8 +34,8 @@ switch_counter_max = 3
 
 startup_time = datetime.now()
 
-while True:
-	with canvas(device) as draw:
+with canvas(device) as draw:
+	while True:
 		draw.rectangle(device.bounding_box, outline="black", fill="black")
 
 		Uptime = get_pretty_timedelta(datetime.now() - startup_time)
