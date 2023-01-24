@@ -40,20 +40,21 @@ y_counter = 0
 y_dir = 1
 
 def update_offset():
+	global y_offset, y_counter, y_dir
 	y_counter += 1
 	if y_counter > 600:
 		y_offset += y_dir
 		y_counter = 0
-	if y_offset > 2
+	if y_offset > 2:
 		y_dir *= -1
 		y_offset = 2
-	if y_offset < 0
+	if y_offset < 0:
 		y_dir *= -1
 		y_offset = 0
 # Anti burn-in.
 
-with canvas(device) as draw:
-	while True:
+while True:
+	with canvas(device) as draw:
 		update_offset()
 		draw.rectangle(device.bounding_box, outline="black", fill="black")
 
