@@ -34,8 +34,27 @@ switch_counter_max = 3
 
 startup_time = datetime.now()
 
+# Anti burn-in.
+y_offset = 0
+y_counter = 0
+y_dir = 1
+
+def update_offset():
+	y_counter += 1
+	if y_counter > 600:
+		y_offset += y_dir
+		y_counter = 0
+	if y_offset > 2
+		y_dir *= -1
+		y_offset = 2
+	if y_offset < 0
+		y_dir *= -1
+		y_offset = 0
+# Anti burn-in.
+
 with canvas(device) as draw:
 	while True:
+		update_offset()
 		draw.rectangle(device.bounding_box, outline="black", fill="black")
 
 		Uptime = get_pretty_timedelta(datetime.now() - startup_time)
@@ -55,28 +74,32 @@ with canvas(device) as draw:
 			cmd = "df -h | awk '$NF==\"/srv/dev-disk-by-uuid-48c68453-e0e4-459b-b46d-9fe9ac086466\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
 		Disk = subprocess.check_output(cmd, shell = True )
 
+		y = y_offset
 		# Uptime.
-		draw.text((0, 0), "\uf017", fill=255, font=icons)
-		draw.text((16, 0), " " + Uptime, fill=255, font=font)
+		draw.text((0, y), "\uf017", fill=255, font=icons)
+		draw.text((16, y), " " + Uptime, fill=255, font=font)
+		y += 16
 
 		# CPU.
-		draw.text((0, 16), "\uf2db", fill=255, font=icons)
-		draw.text((16, 16), str(CPU,'utf-8'), fill=255, font=font)
+		draw.text((0, y), "\uf2db", fill=255, font=icons)
+		draw.text((16, y), str(CPU,'utf-8'), fill=255, font=font)
 
 		# Temps.
-		draw.text((80 - 16, 16), "\uf2cb", fill=255, font=icons)
-		draw.text((80, 16), str(Temp,'utf-8') , fill=255, font=font)
+		draw.text((80 - 16, y), "\uf2cb", fill=255, font=icons)
+		draw.text((80, y), str(Temp,'utf-8') , fill=255, font=font)
+		y += 16
 
 		# Memory.
-		draw.text((0, 32), "\uf538", fill=255, font=icons)
-		draw.text((16, 32), str(MemUsage,'utf-8'), fill=255, font=font)
+		draw.text((0, y), "\uf538", fill=255, font=icons)
+		draw.text((16, y), str(MemUsage,'utf-8'), fill=255, font=font)
+		y += 16
 
 		# Disk.
 		icon = "\uf0c2"
 		if show_sd_card:
 			icon = "\uf7c2"
-		draw.text((0, 48), icon, fill=255, font=icons)
-		draw.text((16, 48), str(Disk,'utf-8'), fill=255, font=font)
+		draw.text((0, y), icon, fill=255, font=icons)
+		draw.text((16, y), str(Disk,'utf-8'), fill=255, font=font)
 
 	switch_counter += 1
 	if switch_counter > switch_counter_max:
