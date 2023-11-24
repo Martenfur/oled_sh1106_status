@@ -12,25 +12,25 @@ from datetime import timedelta
 
 from PIL import Image, ImageDraw, ImageFont
 
-UPTIME_ICON = "\uf017"
-CPU_ICON = "\uf2db"
-TEMP_ICON = "\uf2cb"
-MEMORY_ICON = "\uf538"
-CLOUD_STORAGE_ICON = "\uf0c2"
-SD_ICON= "\uf7c2"
+global UPTIME_ICON = "\uf017"
+global CPU_ICON = "\uf2db"
+global TEMP_ICON = "\uf2cb"
+global MEMORY_ICON = "\uf538"
+global CLOUD_STORAGE_ICON = "\uf0c2"
+global SD_ICON= "\uf7c2"
 
-serial = i2c(port=1, address=0x3C)
-device = sh1106(serial, width=128, height=64, rotate=2)
+global serial = i2c(port=1, address=0x3C)
+global device = sh1106(serial, width=128, height=64, rotate=2)
 
-font = ImageFont.truetype('PixelOperator.ttf', 16)
-icons = ImageFont.truetype('lineawesome-webfont.ttf', 16)
+global font = ImageFont.truetype('PixelOperator.ttf', 16)
+global icons = ImageFont.truetype('lineawesome-webfont.ttf', 16)
 
 
-show_sd_card = True
-switch_counter = 0
-switch_counter_max = 3
+global show_sd_card = True
+global switch_counter = 0
+global switch_counter_max = 3
 
-startup_time = datetime.now()
+global startup_time = datetime.now()
 
 # Anti burn-in.
 y_offset = 0
