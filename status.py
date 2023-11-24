@@ -58,8 +58,8 @@ def draw_icon(draw, x, y, icon):
 	draw.text((x, y), icon, fill=255, font=icons)
 
 def draw_icon_text(draw, x, y, icon, text):
-	draw_icon(x, y, icon)
-	draw_text(x + 16, y, text)
+	draw_icon(draw, x, y, icon)
+	draw_text(draw, x + 16, y, text)
 
 
 def draw_uptime(draw, x, y):
