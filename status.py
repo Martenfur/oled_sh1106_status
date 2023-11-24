@@ -91,8 +91,8 @@ def draw_cloud_storage(draw, x, y):
 	draw_icon_text(draw, x, y, CLOUD_STORAGE_ICON, str(storage, 'utf-8'))
 
 def update(draw):
-	global y_offset, y_counter, y_dir
-	
+	global show_sd_card, switch_counter, switch_counter_max
+
 	update_offset()
 	draw.rectangle(device.bounding_box, outline="black", fill="black")
 
