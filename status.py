@@ -19,18 +19,17 @@ MEMORY_ICON = "\uf538"
 CLOUD_STORAGE_ICON = "\uf0c2"
 SD_ICON= "\uf7c2"
 
-serial = i2c(port=1, address=0x3C)
-device = sh1106(serial, width=128, height=64, rotate=2)
-
-font = ImageFont.truetype('PixelOperator.ttf', 16)
-icons = ImageFont.truetype('lineawesome-webfont.ttf', 16)
-
-
 show_sd_card = True
 switch_counter = 0
 switch_counter_max = 3
 
 startup_time = datetime.now()
+
+serial = i2c(port=1, address=0x3C)
+device = sh1106(serial, width=128, height=64, rotate=2)
+
+font = ImageFont.truetype('PixelOperator.ttf', 16)
+icons = ImageFont.truetype('lineawesome-webfont.ttf', 16)
 
 # Anti burn-in.
 y_offset = 0
@@ -92,6 +91,8 @@ def draw_cloud_storage(draw, x, y):
 	draw_icon_text(draw, x, y, CLOUD_STORAGE_ICON, str(storage, 'utf-8'))
 
 def update(draw):
+	global y_offset, y_counter, y_dir
+	
 	update_offset()
 	draw.rectangle(device.bounding_box, outline="black", fill="black")
 
@@ -103,7 +104,6 @@ def update(draw):
 	y += 16
 	draw_memory(draw, 0, y)
 	y += 16
-	icon = CLOUD_STORAGE_ICON
 
 	if show_sd_card:
 		draw_sd_storage(draw, 0, y)
