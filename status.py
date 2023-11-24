@@ -5,21 +5,19 @@ from luma.oled.device import sh1106
 
 import time
 import subprocess
+import utils
 
 from datetime import datetime
 from datetime import timedelta
 
 from PIL import Image, ImageDraw, ImageFont
 
-# Uptime.
-def get_pretty_timedelta(tdelta):
-		s = tdelta.seconds
-		hours, remainder = divmod(s, 3600)
-		minutes, seconds = divmod(remainder, 60)
-		return str(tdelta.days) + ' days {:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
-# Uptime.
-
-
+UPTIME_ICON = "\uf017"
+CPU_ICON = "\uf2db"
+TEMP_ICON = "\uf2cb"
+MEMORY_ICON = "\uf538"
+CLOUD_STORAGE_ICON = "\uf0c2"
+SD_ICON= "\uf7c2"
 
 serial = i2c(port=1, address=0x3C)
 device = sh1106(serial, width=128, height=64, rotate=2)
@@ -53,54 +51,68 @@ def update_offset():
 		y_offset = 0
 # Anti burn-in.
 
-while True:
-	with canvas(device) as draw:
-		update_offset()
-		draw.rectangle(device.bounding_box, outline="black", fill="black")
+def draw_text(draw, x, y, text):
+	draw.text((x, y), text, fill=255, font=font)
 
-		Uptime = get_pretty_timedelta(datetime.now() - startup_time)
+def draw_icon(draw, x, y, icon):
+	draw.text((x, y), icon, fill=255, font=icons)
 
-		cmd = "top -bn1 | grep load | awk '{printf \" %.2f%\", $(NF-2)}'"
-		CPU = subprocess.check_output(cmd, shell = True )
+def draw_icon_text(draw, x, y, icon, text):
+	draw_icon(x, y, icon)
+	draw_text(x + 16, y, text)
 
-		cmd = "vcgencmd measure_temp |cut -f 2 -d '='"
-		Temp = subprocess.check_output(cmd, shell = True )
 
-		cmd = "free -m | awk 'NR==2{printf \" %s / %sMB\", $3,$2 }'"
-		MemUsage = subprocess.check_output(cmd, shell = True )
+def draw_uptime(draw, x, y):
+	uptime = utils.get_pretty_timedelta(datetime.now() - startup_time)
+	draw_icon_text(x, y, UPTIME_ICON, " " + uptime)
 
-		if show_sd_card:
-			cmd = "df -h | awk '$NF==\"/\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
-		else:
-			cmd = "df -h | awk '$NF==\"/srv/dev-disk-by-uuid-48c68453-e0e4-459b-b46d-9fe9ac086466\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
-		Disk = subprocess.check_output(cmd, shell = True )
+def draw_cpu(draw, x, y):
+	cmd = "top -bn1 | grep load | awk '{printf \" %.2f%\", $(NF-2)}'"
+	cpu = subprocess.check_output(cmd, shell = True)
+	draw_icon_text(x, y, CPU_ICON, str(cpu, 'utf-8'))
 
-		y = y_offset
-		# Uptime.
-		draw.text((0, y), "\uf017", fill=255, font=icons)
-		draw.text((16, y), " " + Uptime, fill=255, font=font)
-		y += 16
+def draw_temp(draw, x, y):
+	cmd = "vcgencmd measure_temp |cut -f 2 -d '='"
+	temp = subprocess.check_output(cmd, shell = True)
+	draw_icon_text(x, y, TEMP_ICON, str(temp, 'utf-8'))
 
-		# CPU.
-		draw.text((0, y), "\uf2db", fill=255, font=icons)
-		draw.text((16, y), str(CPU,'utf-8'), fill=255, font=font)
+def draw_memory(draw, x, y):
+	cmd = "free -m | awk 'NR==2{printf \" %s / %sMB\", $3,$2 }'"
+	mem_usage = subprocess.check_output(cmd, shell = True)
+	draw_icon_text(x, y, MEMORY_ICON, str(mem_usage, 'utf-8'))
 
-		# Temps.
-		draw.text((80 - 16, y), "\uf2cb", fill=255, font=icons)
-		draw.text((80, y), str(Temp,'utf-8') , fill=255, font=font)
-		y += 16
+def draw_sd_storage(draw, x, y):
+	cmd = "df -h | awk '$NF==\"/\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
+	storage = subprocess.check_output(cmd, shell = True)
+	draw_icon_text(x, y, SD_ICON, str(storage, 'utf-8'))
 
-		# Memory.
-		draw.text((0, y), "\uf538", fill=255, font=icons)
-		draw.text((16, y), str(MemUsage,'utf-8'), fill=255, font=font)
-		y += 16
+def draw_cloud_storage(draw, x, y):
+	cmd = "df -h | awk '$NF==\"/srv/dev-disk-by-uuid-48c68453-e0e4-459b-b46d-9fe9ac086466\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
+	storage = subprocess.check_output(cmd, shell = True)
+	draw_icon_text(x, y, CLOUD_STORAGE_ICON, str(storage, 'utf-8'))
 
-		# Disk.
-		icon = "\uf0c2"
-		if show_sd_card:
-			icon = "\uf7c2"
-		draw.text((0, y), icon, fill=255, font=icons)
-		draw.text((16, y), str(Disk,'utf-8'), fill=255, font=font)
+def update(draw):
+	update_offset()
+	draw.rectangle(device.bounding_box, outline="black", fill="black")
+
+	y = y_offset
+	draw_uptime(draw, 0, y)
+	y += 16
+	draw_cpu(draw, 0, y)
+	draw_temp(draw, 80 - 16, y)
+	y += 16
+	draw_memory(0, y)
+	y += 16
+	icon = CLOUD_STORAGE_ICON
+	if show_sd_card:
+		icon = SD_ICON
+	draw.text((0, y), icon, fill=255, font=icons)
+	draw.text((16, y), str(Disk,'utf-8'), fill=255, font=font)
+
+	if show_sd_card:
+		draw_sd_storage(0, y)
+	else:
+		draw_cloud_storage(0, y)
 
 	switch_counter += 1
 	if switch_counter > switch_counter_max:
@@ -109,4 +121,6 @@ while True:
 
 	time.sleep(0.1)
 
-
+while True:
+	with canvas(device) as draw:
+		update(draw)
