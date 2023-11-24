@@ -15,6 +15,7 @@ def run(update_func):
 
 	while True:
 		with canvas(device) as draw:
+			draw.rectangle(device.bounding_box, outline="black", fill="black")
 			update_func()
 
 def draw_text(x, y, text):
