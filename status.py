@@ -64,32 +64,32 @@ def draw_icon_text(draw, x, y, icon, text):
 
 def draw_uptime(draw, x, y):
 	uptime = utils.get_pretty_timedelta(datetime.now() - startup_time)
-	draw_icon_text(x, y, UPTIME_ICON, " " + uptime)
+	draw_icon_text(draw, x, y, UPTIME_ICON, " " + uptime)
 
 def draw_cpu(draw, x, y):
 	cmd = "top -bn1 | grep load | awk '{printf \" %.2f%\", $(NF-2)}'"
 	cpu = subprocess.check_output(cmd, shell = True)
-	draw_icon_text(x, y, CPU_ICON, str(cpu, 'utf-8'))
+	draw_icon_text(draw, x, y, CPU_ICON, str(cpu, 'utf-8'))
 
 def draw_temp(draw, x, y):
 	cmd = "vcgencmd measure_temp |cut -f 2 -d '='"
 	temp = subprocess.check_output(cmd, shell = True)
-	draw_icon_text(x, y, TEMP_ICON, str(temp, 'utf-8'))
+	draw_icon_text(draw, x, y, TEMP_ICON, str(temp, 'utf-8'))
 
 def draw_memory(draw, x, y):
 	cmd = "free -m | awk 'NR==2{printf \" %s / %sMB\", $3,$2 }'"
 	mem_usage = subprocess.check_output(cmd, shell = True)
-	draw_icon_text(x, y, MEMORY_ICON, str(mem_usage, 'utf-8'))
+	draw_icon_text(draw, x, y, MEMORY_ICON, str(mem_usage, 'utf-8'))
 
 def draw_sd_storage(draw, x, y):
 	cmd = "df -h | awk '$NF==\"/\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
 	storage = subprocess.check_output(cmd, shell = True)
-	draw_icon_text(x, y, SD_ICON, str(storage, 'utf-8'))
+	draw_icon_text(draw, x, y, SD_ICON, str(storage, 'utf-8'))
 
 def draw_cloud_storage(draw, x, y):
 	cmd = "df -h | awk '$NF==\"/srv/dev-disk-by-uuid-48c68453-e0e4-459b-b46d-9fe9ac086466\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
 	storage = subprocess.check_output(cmd, shell = True)
-	draw_icon_text(x, y, CLOUD_STORAGE_ICON, str(storage, 'utf-8'))
+	draw_icon_text(draw, x, y, CLOUD_STORAGE_ICON, str(storage, 'utf-8'))
 
 def update(draw):
 	update_offset()
@@ -101,18 +101,14 @@ def update(draw):
 	draw_cpu(draw, 0, y)
 	draw_temp(draw, 80 - 16, y)
 	y += 16
-	draw_memory(0, y)
+	draw_memory(draw, 0, y)
 	y += 16
 	icon = CLOUD_STORAGE_ICON
-	if show_sd_card:
-		icon = SD_ICON
-	draw.text((0, y), icon, fill=255, font=icons)
-	draw.text((16, y), str(Disk,'utf-8'), fill=255, font=font)
 
 	if show_sd_card:
-		draw_sd_storage(0, y)
+		draw_sd_storage(draw, 0, y)
 	else:
-		draw_cloud_storage(0, y)
+		draw_cloud_storage(draw, 0, y)
 
 	switch_counter += 1
 	if switch_counter > switch_counter_max:
