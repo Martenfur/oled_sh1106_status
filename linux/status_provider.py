@@ -2,7 +2,7 @@ import subprocess
 import utils
 from datetime import datetime
 
-def get_uptime(statup_time):
+def get_uptime(startup_time):
 	uptime = utils.get_pretty_timedelta(datetime.now() - startup_time)
 	return uptime
 

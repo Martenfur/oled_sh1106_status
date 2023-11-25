@@ -1,5 +1,5 @@
 
-def get_uptime(statup_time):
+def get_uptime(startup_time):
 	return "0 days 00:00:00"
 
 def get_cpu():
