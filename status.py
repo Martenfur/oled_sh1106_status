@@ -82,11 +82,11 @@ def update_status_messages():
 
 def update_status_screen():
 	if len(status_messages) == 0:
-		display.draw_icon_text(24, 24, NO_TASKS_ICON, "no tasks")
+		display.draw_icon_text(26, 24, NO_TASKS_ICON, " no tasks")
 
 	y = 0
 	for status in reversed(status_messages):
-		display.draw_icon_text(0, y, TASK_ICON, status)
+		display.draw_icon_text(0, y, TASK_ICON, " " + status)
 		y += 16
 
 
