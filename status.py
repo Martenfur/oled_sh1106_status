@@ -144,12 +144,15 @@ def update_info_screen():
 def update():
 	global screen_id, screen_change_counter, screen_change_interval
 	
-	update_status_messages()
+	try:
+		update_status_messages()
 
-	if screen_id == 0:
-		update_info_screen()
-	else:
-		update_status_screen()
+		if screen_id == 0:
+			update_info_screen()
+		else:
+			update_status_screen()
+	except IOError as e:
+		print("i/o error caught: " + str(e))
 
 	screen_change_counter += 1
 	if screen_change_counter >= screen_change_interval:
@@ -157,7 +160,6 @@ def update():
 		screen_id += 1
 		if screen_id > max_screen_id:
 			screen_id = 0
-	
 	time.sleep(0.1)
 
 
