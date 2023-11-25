@@ -81,17 +81,39 @@ def update_status_messages():
 		if command == "remove" and message in status_messages:
 			del status_messages[message]
 
+tasks_scroll_y = 0
+tasks_scroll_max_y = 0
+tasks_scroll_direction = 1
+tasks_max = 2
 
 def update_status_screen():
+	global tasks_scroll_y, tasks_scroll_max_y, tasks_scroll_direction, tasks_max
+
 	if len(status_messages) == 0:
 		display.draw_icon_text(26, 24, NO_TASKS_ICON, " no tasks")
 		return
-	y = 0
-	for key in reversed(status_messages):
-		display.draw_icon_text(0, y, TASK_ICON, " " + key)
-		display.draw_icon_text(0, y + 16, UPTIME_ICON, " " + utils.get_pretty_short_timedelta(datetime.now() - status_messages[key]["time"]))
 
+	y = 0
+	if len(status_messages) > tasks_max:
+		tasks_scroll_max_y = (len(status_messages) - tasks_max) * 32
+		tasks_scroll_y += tasks_scroll_direction * 4
+		if tasks_scroll_y < 0:
+			tasks_scroll_y = 0
+			tasks_scroll_direction *= -1
+		
+		if tasks_scroll_y > tasks_scroll_max_y:
+			tasks_scroll_y = tasks_scroll_max_y
+			tasks_scroll_direction *= -1
+
+		y = -tasks_scroll_y
+
+	i = 0
+	for key in reversed(status_messages):
+		display.draw_text(0, y, str(i))
+		display.draw_icon_text(10, y, TASK_ICON, " " + key)
+		display.draw_icon_text(48, y + 16, UPTIME_ICON, " " + utils.get_pretty_short_timedelta(datetime.now() - status_messages[key]["time"]))
 		y += 32
+		i += 1
 
 
 
