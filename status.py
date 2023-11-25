@@ -43,9 +43,48 @@ def update_offset():
 		y_offset = 0
 # Anti burn-in.
 
-def update():
+
+screen_id = 0
+max_screen_id = 1
+screen_change_counter = 0
+screen_change_interval = 10
+status_messages = []
+
+def update_status_messages():
+	global status_messages
+
+	filename = utils.get_commands_filename()
+	text = utils.read_file_text(filename)
+
+	if text == "":
+		return
+
+	# Clearing the file.
+	utils.write_file_text(filename, "")
+
+	lines = text.splitlines()
+
+	for line in lines:
+		words = input_string.split()
+		command = words[0]
+		message = ' '.join(words[1:])
+
+		if command == "add":
+			if message not in status_messages:
+				status_messages.append(message)
+		if command == "remove":
+			status_messages.remove(message)	
+
+
+def update_status_screen():
+	display.draw_text(0, 0, "NO STATUS")
+
+
+def update_info_screen():
 	global show_sd_card, switch_counter, switch_counter_max
 
+	update_status_messages()
+	
 	update_offset()
 
 	y = y_offset
@@ -67,6 +106,25 @@ def update():
 		switch_counter = 0
 		show_sd_card = not show_sd_card
 
+
+
+
+def update():
+	global screen_id, screen_change_counter, screen_change_interval
+
+	if screen_id == 0:
+		update_info_screen()
+	else:
+		update_status_screen()
+
+	screen_change_counter += 1
+	if screen_change_counter >= screen_change_interval:
+		screen_change_counter = 0
+		screen_id += 1
+		if screen_id > max_screen_id:
+			screen_id = 0
+	
 	time.sleep(0.1)
+
 
 display.run(update)
