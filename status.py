@@ -65,19 +65,23 @@ def update_status_messages():
 	lines = text.splitlines()
 
 	for line in lines:
-		words = input_string.split()
+		words = line.split()
+		if len(words) < 2:
+			return
 		command = words[0]
 		message = ' '.join(words[1:])
-
 		if command == "add":
 			if message not in status_messages:
 				status_messages.append(message)
-		if command == "remove":
-			status_messages.remove(message)	
+		if command == "remove" and message in status_messages:
+			status_messages.remove(message)
 
 
 def update_status_screen():
-	display.draw_text(0, 0, "NO STATUS")
+	y = 0
+	for status in resersed(status_messages):
+		display.draw_text(0, y, status)
+		y += 16
 
 
 def update_info_screen():

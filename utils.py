@@ -32,6 +32,18 @@ def write_file_text(path, text):
 			pass
 		time.sleep(0.1)
 
+# Writes text to a file even if it is busy, overriding all previous text.
+def append_file_text(path, text):
+	for iter in range(0, 10):
+		try:
+			with open(path, "a") as file:
+				file.write(text)
+				return
+		except (OSError, PermissionError, IOError) as e:
+			pass
+		time.sleep(0.1)
+
+
 # Files =========================================================================
 
 
