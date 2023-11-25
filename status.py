@@ -50,7 +50,7 @@ def update_offset():
 screen_id = 0
 max_screen_id = 1
 screen_change_counter = 0
-screen_change_interval = 10
+screen_change_interval = 30
 status_messages = {}
 
 def update_status_messages():
@@ -107,13 +107,10 @@ def update_status_screen():
 
 		y = -tasks_scroll_y
 
-	i = 0
 	for key in reversed(status_messages):
-		display.draw_text(0, y, str(i))
-		display.draw_icon_text(10, y, TASK_ICON, " " + key)
+		display.draw_icon_text(0, y, TASK_ICON, " " + key)
 		display.draw_icon_text(48, y + 16, UPTIME_ICON, " " + utils.get_pretty_short_timedelta(datetime.now() - status_messages[key]["time"]))
 		y += 32
-		i += 1
 
 
 
