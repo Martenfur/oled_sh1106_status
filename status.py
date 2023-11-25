@@ -51,7 +51,7 @@ screen_id = 0
 max_screen_id = 1
 screen_change_counter = 0
 screen_change_interval = 10
-status_messages = []
+status_messages = {}
 
 def update_status_messages():
 	global status_messages
@@ -74,26 +74,29 @@ def update_status_messages():
 		command = words[0]
 		message = ' '.join(words[1:])
 		if command == "add":
-			if message not in status_messages:
-				status_messages.append(message)
+			status_messages[message] = {
+				"time": datetime.now(),
+				"message": message
+			}
 		if command == "remove" and message in status_messages:
-			status_messages.remove(message)
+			del status_messages[message]
 
 
 def update_status_screen():
 	if len(status_messages) == 0:
 		display.draw_icon_text(26, 24, NO_TASKS_ICON, " no tasks")
-
+		return
 	y = 0
-	for status in reversed(status_messages):
-		display.draw_icon_text(0, y, TASK_ICON, " " + status)
-		y += 16
+	for key in reversed(status_messages):
+		display.draw_icon_text(0, y, TASK_ICON, " " + key)
+		display.draw_icon_text(0, y + 16, UPTIME_ICON, " " + utils.get_pretty_short_timedelta(datetime.now() - status_messages[key]["time"]))
+
+		y += 32
+
 
 
 def update_info_screen():
 	global show_sd_card, switch_counter, switch_counter_max
-
-	update_status_messages()
 	
 	update_offset()
 
@@ -121,6 +124,8 @@ def update_info_screen():
 
 def update():
 	global screen_id, screen_change_counter, screen_change_interval
+	
+	update_status_messages()
 
 	if screen_id == 0:
 		update_info_screen()
