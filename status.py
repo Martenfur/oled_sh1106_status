@@ -45,7 +45,7 @@ def draw_uptime(x, y):
 	display.draw_icon_text(x, y, UPTIME_ICON, " " + uptime)
 
 def draw_cpu(x, y):
-	cmd = "top -bn1 | grep load | awk '{printf \" %.2f%\", $(NF-2)}'"
+	cmd = "top -bn1 | grep load | awk '{printf \" %.2f%%\", $(NF-2)}'"
 	cpu = subprocess.check_output(cmd, shell = True)
 	display.draw_icon_text(x, y, CPU_ICON, str(cpu, 'utf-8'))
 
