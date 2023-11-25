@@ -50,7 +50,7 @@ def update_offset():
 screen_id = 0
 max_screen_id = 1
 screen_change_counter = 0
-screen_change_interval = 30
+screen_change_interval = 20
 status_messages = {}
 
 def update_status_messages():
@@ -96,7 +96,7 @@ def update_status_screen():
 	y = 0
 	if len(status_messages) > tasks_max:
 		tasks_scroll_max_y = (len(status_messages) - tasks_max) * 32
-		tasks_scroll_y += tasks_scroll_direction * 4
+		tasks_scroll_y += tasks_scroll_direction * 2
 		if tasks_scroll_y < 0:
 			tasks_scroll_y = 0
 			tasks_scroll_direction *= -1
