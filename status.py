@@ -79,7 +79,7 @@ def update_status_messages():
 
 def update_status_screen():
 	y = 0
-	for status in resersed(status_messages):
+	for status in reversed(status_messages):
 		display.draw_text(0, y, status)
 		y += 16
 
