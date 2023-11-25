@@ -77,7 +77,7 @@ def update():
 	y = y_offset
 	draw_uptime(0, y)
 	y += 16
-	#draw_cpu(0, y)
+	draw_cpu(0, y)
 	draw_temp(80 - 16, y)
 	y += 16
 	draw_memory(0, y)
