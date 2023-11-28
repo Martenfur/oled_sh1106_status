@@ -1,5 +1,9 @@
 # oled status screen for sh1106 drivers
 
+
+
+![img](oled.png)
+
 This is the script that outputs system status on a sh1106 (**not ssd1306**) OLED. It's tailored to my needs so you will probably want to modify it a little bit.
 
 ## Setup
