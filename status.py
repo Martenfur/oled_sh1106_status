@@ -79,7 +79,11 @@ def update_status_messages():
 				"message": message
 			}
 		if command == "remove" and message in status_messages:
+			removed_message = status_messages[message]
 			del status_messages[message]
+			log_message = str(datetime.now()) + "\n" + message + ": " + (utils.get_pretty_timedelta(datetime.now() - removed_message["time"]).replace(" days " , ":"))
+			log_message += "\n=======================\n"
+			utils.append_file_text(utils.get_logs_filename(), log_message)
 
 tasks_scroll_y = 0
 tasks_scroll_max_y = 0
@@ -151,7 +155,7 @@ def update():
 			update_info_screen()
 		else:
 			update_status_screen()
-	except IOError as e:
+	except (IOError, OSError) as e:
 		print("i/o error caught: " + str(e))
 
 	screen_change_counter += 1

@@ -6,6 +6,9 @@ import time
 def get_commands_filename():
 	return os.path.dirname(os.path.realpath(__file__)) + "/.commands"
 
+def get_logs_filename():
+	return os.path.dirname(os.path.realpath(__file__)) + "/log.txt"
+
 # Reads all text from a file even if it is busy.
 def read_file_text(path):
 	if not os.path.isfile(path):

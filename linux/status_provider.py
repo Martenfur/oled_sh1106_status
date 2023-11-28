@@ -27,6 +27,6 @@ def get_sd_storage():
 	return str(storage, 'utf-8')
 
 def get_cloud_storage():
-	cmd = "df -h | awk '$NF==\"/srv/dev-disk-by-uuid-48c68453-e0e4-459b-b46d-9fe9ac086466\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
+	cmd = "df -h | awk '$NF==\"/srv/dev-disk-by-uuid-11777043-4443-4612-880c-90a5d0efd236\"{printf \" %d / %dGB %s\", $3,$2,$5}'"
 	storage = subprocess.check_output(cmd, shell = True)
 	return str(storage, 'utf-8')
