@@ -82,3 +82,9 @@ You can use this feature to track background tasks. For example:
 ```bash
 python3 /full/path/to/repo/oled_sh1106_status add Backup Job ; your_backup_command ; python3 /full/path/to/repo/oled_sh1106_status remove Backup Job
 ```
+
+To make it shorter, you can create a symlink:
+
+```bash
+sudo ln -sf ~/feats/oled_sh1106_status/up.py /srv/oled/up.py
+```
